@@ -1,21 +1,25 @@
 <script setup lang="ts">
-import { Heart, ShoppingCart, Search } from "lucide-vue-next";
+import { Heart, ShoppingCart, Search, Star } from "lucide-vue-next";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/select";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { getCategories } from "@/handler/category";
 import { getBanners } from "@/handler/banner";
+import { getFeaturedProducts } from "@/handler/product";
 import Banner from "@/components/Banner.vue";
 
 const { data: categories } = await useAsyncData(getCategories);
 const { data: banners } = await useAsyncData(getBanners);
+const { data: products } = await useAsyncData(getFeaturedProducts);
 </script>
 
 <template>
-  <header class="border border-slate-200">
+  <header class="border border-slate-200 fixed bg-white z-50 w-full">
     <div class="container flex items-center justify-between py-4">
       <div class="gap-x-1 items-center hidden md:flex">
         <svg viewBox="0 0 340 90" class="h-10 text-white">
@@ -71,10 +75,41 @@ const { data: banners } = await useAsyncData(getBanners);
       </div>
     </div>
   </header>
-  <main>
+  <main class="pt-16">
     <Banner :banners="banners!" class="py-8 bg-slate-50" />
     <section class="container mt-12">
-      <h1>Featured Products</h1>
+      <h1 class="text-2xl font-semibold my-4">Featured Products</h1>
+      <ul class="flex flex-wrap justify-between gap-6">
+        <li v-for="product of products">
+          <Card class="w-[19rem] min-h-[20rem]">
+            <CardContent class="h-[16rem] p-12">
+              <img
+                class="w-full h-full object-cover"
+                :src="product.picture"
+                alt=""
+              />
+            </CardContent>
+            <CardFooter class="pb-10">
+              <p class="text-sm font-semibold text-slate-700">
+                {{ product.name }}
+              </p>
+
+              <div class="flex gap-x-1 mt-0.5">
+                <Star class="w-3 text-yellow-500" />
+                <Star class="w-3 text-yellow-500" />
+                <Star class="w-3 text-yellow-500" />
+                <Star class="w-3 text-yellow-500" />
+                <Star class="w-3 text-yellow-500" />
+              </div>
+
+              <p class="text-lg font-semibold text-slate-700">
+                IDR {{ product.price.toLocaleString() }}
+              </p>
+              <Button class="w-full font-semibold mt-6">Add to Cart</Button>
+            </CardFooter>
+          </Card>
+        </li>
+      </ul>
     </section>
   </main>
 </template>
